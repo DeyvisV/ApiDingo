@@ -144,11 +144,14 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\OAuthServiceProvider::class,
 
         /*
          * Packages Service Providers...
          */
-        Dingo\Api\Provider\LaravelServiceProvider::class
+        Dingo\Api\Provider\LaravelServiceProvider::class,
+        LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider::class,
+        LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider::class,
 
     ],
 
@@ -198,6 +201,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Uuid'      => Webpatser\Uuid\Uuid::class,
+        'Authorizer' => LucaDegasperi\OAuth2Server\Facades\Authorizer::class,
 
     ],
 
