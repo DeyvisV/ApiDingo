@@ -28,8 +28,13 @@ return [
     */
 
     'grant_types' => [
-         'client_credentials' => [
+        'client_credentials' => [
             'class' => '\League\OAuth2\Server\Grant\ClientCredentialsGrant',
+            'access_token_ttl' => 3600
+        ],
+        'password' => [
+            'class' => '\League\OAuth2\Server\Grant\PasswordGrant',
+            'callback' => 'App\Http\Controllers\Auth\OAuthController@authorizePassword',
             'access_token_ttl' => 3600
         ]
     ],

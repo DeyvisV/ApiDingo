@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Authorizer;
-
+use Auth;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -26,5 +26,19 @@ class OAuthController extends Controller
     public function authorizeClient()
     {
         return $this->response->array(Authorizer::issueAccessToken());
-    } 
+    }
+
+    public function authorizePassword($username, $password)
+    {
+        $credentials = [
+            'email'    => $username,
+            'password' => $password,
+        ];
+
+        if (Auth::once($credentials)) {
+            return Auth::user()->id;
+        }
+
+        return false;
+    }
 }
