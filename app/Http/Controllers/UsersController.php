@@ -12,6 +12,10 @@ use App\Http\Requests\CreateUserRequest;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 class UsersController extends Controller
 {
     use Helpers;
@@ -50,7 +54,12 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $user = User::where('uuid', $id)->firstOrFail();
+            return $this->response->item($user, new UserTransformer());
+        } catch (ModelNotFoundException $e) {
+            throw new NotFoundHttpException;
+        }
     }
 
     /**
