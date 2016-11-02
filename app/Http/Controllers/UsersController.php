@@ -9,12 +9,15 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use Dingo\Api\Routing\Helpers;
 use App\Http\Controllers\Controller;
+use Dingo\Api\Exception\UpdateResourceFailedException;
 
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Validation\Factory;
 
 class UsersController extends Controller
 {
@@ -69,9 +72,23 @@ class UsersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        //
+        try {
+            $user = User::where('uuid', $id)->firstOrFail();
+            if ($user->email !== $request->get('email')) {
+                $validator = app(Factory::class);
+                $v = $validator->make($request->all(), ['email' => 'unique:users,email']);
+                if ($v->fails()) {
+                    throw new UpdateResourceFailedException('Resource update failure', $v->errors()->getMessages());
+                }
+            }
+            $user->fill($request->all());
+            $user->save();
+            return $this->response->item($user, new UserTransformer());
+        } catch (ModelNotFoundException $e) {
+            throw new NotFoundHttpException;
+        }
     }
 
     /**
