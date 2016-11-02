@@ -99,6 +99,12 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $user = User::where('uuid', $id)->firstOrFail();
+            $user->delete();
+            return $this->response->noContent();
+        } catch (ModelNotFoundException $e) {
+            throw new NotFoundHttpException;
+        }
     }
 }
